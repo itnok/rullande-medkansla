@@ -1,0 +1,6 @@
+---
+    - hosts: volvuntu
+      gather_facts: yes
+
+      vars_files:
+        - vars/main.yml
