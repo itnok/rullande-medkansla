@@ -39,8 +39,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         box.vm.network :forwarded_port, guest: 22, host: LOCAL_SSH_PORT, id: "ssh", auto_correct: true
 
         box.vm.provider :vmware_desktop do |v|
-            v.memory = VAGRANT_RAM_MB
-            v.cpus = VAGRANT_CPUS
+            v.gui = true
+            v.vmx["memsize"] = VAGRANT_RAM_MB
+            v.vmx["numvcpus"] = VAGRANT_CPUS
+            v.vmx["mks.enable3d"] = true
         end
 
     end
