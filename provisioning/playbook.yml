@@ -5,5 +5,125 @@
   vars_files:
     - vars/main.yml
 
-  roles:
-    - { role: itnok.update_ubuntu }
+  tasks:
+    - name: "==> Install Hardware Enablement package"
+      include_role:
+        name: itnok.manage_pkg_ubuntu
+      vars:
+        manage_pkg_app_install_recommends: yes
+        manage_pkg_app:
+          - "linux-generic-hwe-18.04"
+
+    - name: "==> Install Docker"
+      include_role:
+        name: itnok.manage_pkg_ubuntu
+      vars:
+        install_dependency:
+          - "apt-transport-https"
+          - "ca-certificates"
+          - "curl"
+          - "gnupg-agent"
+          - "software-properties-common"
+        manage_pkg_dependency: "{{ __manage_pkg_dependency + install_dependency }}"
+        manage_pkg_key:
+          - "https://download.docker.com/linux/ubuntu/gpg"
+        manage_pkg_repo:
+          - "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable"
+        manage_pkg_app:
+          - "docker-ce"
+
+    - name: "==> Upgrade the whole OS & all packages"
+      include_role:
+        name: itnok.update_ubuntu
+    
+    - name: "==> Install Cinnamon"
+      include_role:
+        name: itnok.manage_pkg_ubuntu
+      vars:
+        manage_pkg_repo:
+          - "ppa:embrosyn/cinnamon"
+        manage_pkg_app:
+          - "cinnamon"
+  
+    - name: "==> Install Cinnamon customizations"
+      include_role:
+        name: itnok.manage_pkg_ubuntu
+      vars:
+        manage_pkg_repo:
+          - "ppa:noobslab/macbuntu"
+        manage_pkg_app:
+          - "macbuntu-os-icons-v1804"
+          - "macbuntu-os-ithemes-v1804"
+          - "macbuntu-os-plank-theme-v1804"
+          - "plank"
+
+    - name: "==> Install Ubuntu Desktop"
+      include_role:
+        name: itnok.manage_pkg_ubuntu
+      vars:
+        manage_pkg_app:
+          - "ubuntu-desktop"
+
+    - name: "==> Install xserver HWE optimization"
+      include_role:
+        name: itnok.manage_pkg_ubuntu
+      vars:
+        manage_pkg_app_install_recommends: yes
+        manage_pkg_app:
+          - "xserver-xorg-hwe-18.04"
+
+    - name: "==> Install SDDM login manager"
+      include_role:
+        name: itnok.manage_pkg_ubuntu
+      vars:
+        manage_pkg_app:
+          - "sddm"
+
+    - name: "Download Chili SDDM theme"
+      get_url:
+        url: "https://github.com/MarianArlt/sddm-chili/archive/0.1.5.tar.gz"
+        dest: "/tmp/sddm-chili.tar.gz"
+        checksum: "sha256:a3c0607bf70f448fff0a271624e3bc15af978894c04c98355d00a57431e49a0f"
+
+    - name: "Make sure '/usr/share/sddm/themes/chili' directory exists"
+      file:
+        path: "/usr/share/sddm/themes/chili"
+        state: directory
+        owner: root
+        group: root
+
+    - name: "Install Chili theme for SDDM"
+      unarchive:
+        src: "/tmp/sddm-chili.tar.gz"
+        dest: "/usr/share/sddm/themes/chili"
+        remote_src: yes
+        extra_opts:
+          - "--strip-components"
+          - "1"
+
+    - name: "Set Chili as default SDDM theme"
+      ini_file:
+        path: "/etc/sddm.conf"
+        section: "Theme"
+        option: "Current"
+        value: "chili"
+        backup: yes
+
+    - name: "==> Uninstall GDM3 login manager"
+      include_role:
+        name: itnok.manage_pkg_ubuntu
+      vars:
+        manage_pkg_app_do: "absent"
+        manage_pkg_app:
+            - "gdm3"
+
+    - name: "==> Install Mesa"
+      include_role:
+        name: itnok.manage_pkg_ubuntu
+      vars:
+        manage_pkg_repo:
+          - "ppa:kisak/kisak-mesa"
+
+    - name: "==> Upgrade the whole OS & all packages"
+      include_role:
+        name: itnok.update_ubuntu
