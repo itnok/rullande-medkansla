@@ -35,27 +35,6 @@
     - name: "==> Upgrade the whole OS & all packages"
       include_role:
         name: itnok.update_ubuntu
-    
-    - name: "==> Install Cinnamon"
-      include_role:
-        name: itnok.manage_pkg_ubuntu
-      vars:
-        manage_pkg_repo:
-          - "ppa:embrosyn/cinnamon"
-        manage_pkg_app:
-          - "cinnamon"
-  
-    - name: "==> Install Cinnamon customizations"
-      include_role:
-        name: itnok.manage_pkg_ubuntu
-      vars:
-        manage_pkg_repo:
-          - "ppa:noobslab/macbuntu"
-        manage_pkg_app:
-          - "macbuntu-os-icons-v1804"
-          - "macbuntu-os-ithemes-v1804"
-          - "macbuntu-os-plank-theme-v1804"
-          - "plank"
 
     - name: "==> Install Ubuntu Desktop"
       include_role:
@@ -72,10 +51,18 @@
         manage_pkg_app:
           - "xserver-xorg-hwe-18.04"
 
+    - name: "==> Upgrade the whole OS & all packages"
+      include_role:
+        name: itnok.update_ubuntu
+
     - name: "==> Install SDDM login manager"
       include_role:
         name: itnok.manage_pkg_ubuntu
       vars:
+        install_dependency:
+          - "qml-module-qtquick-controls"
+          - "qml-module-qtquick-layouts"
+        manage_pkg_dependency: "{{ __manage_pkg_dependency + install_dependency }}"
         manage_pkg_app:
           - "sddm"
 
@@ -107,7 +94,13 @@
         section: "Theme"
         option: "Current"
         value: "chili"
+        state: present
         backup: yes
+
+    # - name: "Restart SDDM to apply configuration changes"
+    #   service:
+    #     name: sddm
+    #     state: restarted
 
     - name: "==> Uninstall GDM3 login manager"
       include_role:
@@ -116,6 +109,70 @@
         manage_pkg_app_do: "absent"
         manage_pkg_app:
             - "gdm3"
+
+    - name: "==> Install Cinnamon"
+      include_role:
+        name: itnok.manage_pkg_ubuntu
+      vars:
+        install_dependency:
+          - "dconf-tools"
+          - "python3-psutil"
+        manage_pkg_dependency: "{{ __manage_pkg_dependency + install_dependency }}"
+        manage_pkg_repo:
+          - "ppa:embrosyn/cinnamon"
+        manage_pkg_app:
+          - "cinnamon"
+
+    - name: "==> Install Cinnamon customizations"
+      include_role:
+        name: itnok.manage_pkg_ubuntu
+      vars:
+        manage_pkg_repo:
+          - "ppa:noobslab/macbuntu"
+        manage_pkg_app:
+          - "macbuntu-os-icons-v1804"
+          - "macbuntu-os-ithemes-v1804"
+          - "macbuntu-os-plank-theme-v1804"
+          - "plank"
+
+    - name: "Customize Cinnamon UI"
+      dconf:
+        key: "{{ item.key }}"
+        value: "{{ item.value }}"
+        state: present
+      with_items:
+        - { key: "/org/cinnamon/panels-height", value: [ "1:24" ] }
+        - { key: "/org/cinnamon/alttab-switcher-delay", value: "100" }
+        - { key: "/org/cinnamon/panel-edit-mode", value: "false" }
+        - { key: "/org/cinnamon/enabled-applets", value: [ "panel1:left:1:menu@cinnamon.org:0", "panel1:right:4:systray@cinnamon.org:3", "panel1:right:12:notifications@cinnamon.org:4", "panel1:right:6:keyboard@cinnamon.org:7", "panel1:right:5:network@cinnamon.org:9", "panel1:right:7:sound@cinnamon.org:10", "panel1:right:9:power@cinnamon.org:11", "panel1:right:10:calendar@cinnamon.org:12", "panel1:left:2:spacer@cinnamon.org:13", "panel1:left:0:spacer@cinnamon.org:14", "panel1:right:13:spacer@cinnamon.org:15", "panel1:right:11:spacer@cinnamon.org:17", "panel1:right:8:spacer@cinnamon.org:18", "panel1:right:2:spacer@cinnamon.org:19" ] }
+        - { key: "/org/cinnamon/alttab-minimized-aware", value: "true" }
+        - { key: "/org/cinnamon/next-applet-id", value: "21" }
+        - { key: "/org/cinnamon/enabled-desklets", value: "@as []" }
+        - { key: "/org/cinnamon/alttab-switcher-style", value: "'icons'" }
+        - { key: "/org/cinnamon/hotcorner-layout", value: [ "expo:false:0", "scale:false:0", "scale:false:0", "desktop:false:0" ] }
+        - { key: "/org/cinnamon/panel-zone-icon-sizes", value: '[{"panelId": 1, "left": 22, "center": 0, "right": 0}]' }
+        - { key: "/org/cinnamon/alttab-switcher-show-all-workspaces", value: "true" }
+        - { key: "/org/cinnamon/applet-cache-updated", value: "0" }
+        - { key: "/org/cinnamon/panels-enabled", value: [ "1:0:top" ] }
+
+        - { key: "/org/cinnamon/muffin/resize-threshold", value: "24" }
+
+        - { key: "/org/cinnamon/desktop/background/slideshow/image-source", value: "'directory:///~/Pictures'" }
+        - { key: "/org/cinnamon/desktop/background/slideshow/delay", value: "15" }
+
+        - { key: "/org/cinnamon/desktop/interface/icon-theme", value: "'MacBuntu-OSX'" }
+        - { key: "/org/cinnamon/desktop/interface/cursor-theme", value: "'Macbuntu-OSX-cursors'" }
+        - { key: "/org/cinnamon/desktop/interface/gtk-theme", value: "'MacBuntu-Sierra-dark-solid'" }
+
+        - { key: "/org/cinnamon/desktop/sound/event-sounds", value: "false" }
+
+        - { key: "/org/cinnamon/desktop/wm/preferences/min-window-opacity", value: "30" }
+        - { key: "/org/cinnamon/desktop/wm/preferences/button-layout", value: "'close,minimize,maximize:'" }
+        - { key: "/org/cinnamon/desktop/wm/preferences/theme", value: "'MacBuntu-Sierra-dark'" }
+
+        - { key: "/org/cinnamon/theme/symbolic-relative-size", value: "0.75" }
+        - { key: "/org/cinnamon/theme/theme-cache-updated", value: "0" }
+        - { key: "/org/cinnamon/theme/name", value: "'MacBuntu-OS-3.2-High-Sierra-Dark-master'" }
 
     - name: "==> Install Mesa"
       include_role:
