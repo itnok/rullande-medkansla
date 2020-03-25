@@ -32,9 +32,9 @@
         manage_pkg_app:
           - "docker-ce"
 
-    - name: "==> Adding existing user '{{ user }}' to group 'docker'"
+    - name: "Adding existing user '{{ remote_user }}' to group 'docker'"
       user:
-        name: "{{ user }}"
+        name: "{{ remote_user }}"
         groups: docker
         append: yes
 

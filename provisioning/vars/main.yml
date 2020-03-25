@@ -1,4 +1,3 @@
 ---
-  user: "vagrant"
   ntp_timezone: "America/Los_Angeles"
   ansible_python_interpreter: "/usr/bin/python3"
