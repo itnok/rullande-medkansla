@@ -32,6 +32,12 @@
         manage_pkg_app:
           - "docker-ce"
 
+    - name: "==> Adding existing user '{{ user }}' to group 'docker'"
+      user:
+        name: "{{ user }}"
+        groups: docker
+        append: yes
+
     - name: "==> Upgrade the whole OS & all packages"
       include_role:
         name: itnok.update_ubuntu
