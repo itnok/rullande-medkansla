@@ -6,6 +6,11 @@
     - vars/main.yml
 
   tasks:
+    - name: "==> Set remote_user if needed"
+      set_fact:
+        remote_user: "{{ ansible_ssh_user }}"
+      when: remote_user is not defined
+
     - name: "==> Install Hardware Enablement package"
       include_role:
         name: itnok.manage_pkg_ubuntu
