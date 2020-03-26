@@ -31,7 +31,7 @@
           - "software-properties-common"
         manage_pkg_dependency: "{{ __manage_pkg_dependency + install_dependency }}"
         manage_pkg_key:
-          - "https://download.docker.com/linux/ubuntu/gpg"
+          - { url: "https://download.docker.com/linux/ubuntu/gpg", key: "" }
         manage_pkg_repo:
           - "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable"
         manage_pkg_app:
