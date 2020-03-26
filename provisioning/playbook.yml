@@ -108,11 +108,6 @@
         state: present
         backup: yes
 
-    # - name: "Restart SDDM to apply configuration changes"
-    #   service:
-    #     name: sddm
-    #     state: restarted
-
     - name: "==> Uninstall GDM3 login manager"
       include_role:
         name: itnok.manage_pkg_ubuntu
@@ -120,6 +115,10 @@
         manage_pkg_app_do: "absent"
         manage_pkg_app:
             - "gdm3"
+
+    - name: "Reboot of {{ ansible_host }} to activate SDDM"
+      reboot:
+        reboot_timeout: 300
 
     - name: "==> Install Cinnamon"
       include_role:
