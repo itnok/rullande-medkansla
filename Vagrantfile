@@ -7,7 +7,7 @@ VAGRANTFILE_API_VERSION = "2"
 # Vagrant box name (used for hostname too)
 VAGRANT_BOX_NAME = "rullandemedkansla"
 # Vagrant base box to use
-VAGRANT_BOX_OS = "bento/ubuntu-18.04"
+VAGRANT_BOX_OS = "generic/ubuntu1804"
 # amount of RAM for Vagrant box
 VAGRANT_RAM_MB = "8192"
 # number of CPUs for Vagrant box
