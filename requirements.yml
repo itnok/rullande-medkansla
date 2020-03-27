@@ -4,3 +4,5 @@ roles:
     version: 1.0.2
   - src: itnok.manage_pkg_ubuntu
     version: 1.2.3
+  - src: itnok.install_ros_ubuntu
+    version: 1.0.0

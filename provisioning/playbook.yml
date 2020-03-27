@@ -49,34 +49,10 @@
 
     - name: "==> Install ROS Melodic Morenia"
       include_role:
-        name: itnok.manage_pkg_ubuntu
+        name: itnok.install_ros_ubuntu
       vars:
-        install_dependency:
-          - "build-essential"
-        manage_pkg_dependency: "{{ __manage_pkg_dependency + install_dependency }}"
-        manage_pkg_key:
-          - { url: "hkp://keyserver.ubuntu.com:80", key: "C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654" }
-        manage_pkg_repo:
-          - "deb http://packages.ros.org/ros/ubuntu bionic main"
-        manage_pkg_app:
-          - "ros-melodic-ros-base"
-          - "python-rosdep"
-          - "python-rosinstall"
-          - "python-rosinstall-generator"
-          - "python-wstool"
-
-    - name: "Check if `rosdep init` was run"
-      stat:
-        path: "/etc/ros/rosdep/sources.list.d/20-default.list"
-      register: ros_sources_list
-
-    - name: "Initialize ROS dependencies source list"
-      shell: "rosdep init"
-      become: yes
-      when: ros_sources_list.stat.exists == False
-
-    - name: "Update ROS dependencies for user '{{ remote_user }}'"
-      shell: "rosdep update"
+        install_ros_distro: "melodic"
+        install_ros: "ros-base"
 
     - name: "==> Install Ubuntu Desktop"
       include_role:
