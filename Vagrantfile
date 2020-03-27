@@ -5,7 +5,7 @@
 # Vagrant API version to use
 VAGRANTFILE_API_VERSION = "2"
 # Vagrant box name (used for hostname too)
-VAGRANT_BOX_NAME = "volvuntu"
+VAGRANT_BOX_NAME = "rullandemedkansla"
 # Vagrant base box to use
 VAGRANT_BOX_OS = "bento/ubuntu-18.04"
 # amount of RAM for Vagrant box
@@ -29,9 +29,15 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.ssh.guest_port = 22
     config.ssh.insert_key = false
 
+    # Vagrant boot needs more time on AppVeyor.
+    # See: https://help.appveyor.com/discussions/problems/1247-vagrant-not-working-inside-appveyor
+    config.vm.boot_timeout = 1800
+
+    # Prevent SharedFoldersEnableSymlinksCreate errors.
     config.vm.synced_folder ".", "/vagrant", disabled: true
 
-    # Set the name of the VM. See: http://stackoverflow.com/a/17864388/100134
+    # Set the name of the VM.
+    # See: http://stackoverflow.com/a/17864388/100134
     config.vm.define VAGRANT_BOX_NAME do |box|
         box.vm.box = VAGRANT_BOX_OS
         box.vm.hostname = VAGRANT_BOX_NAME
@@ -45,6 +51,22 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
             v.vmx["mks.enable3d"] = true
         end
 
+        config.vm.provider :virtualbox do |v|
+            v.name = VAGRANT_BOX_NAME
+            v.memory = VAGRANT_RAM_MB
+            v.cpus = VAGRANT_CPUS
+            # Vagrant needs this config on AppVeyor to spin up correctly
+            # See: https://help.appveyor.com/discussions/problems/1247-vagrant-not-working-inside-appveyor
+            v.customize ["modifyvm", :id, "--nictype1", "Am79C973"]
+            v.customize ['modifyvm', :id, '--cableconnected1', 'on']
+        end
+
+        config.vm.provider :libvirt do |v|
+            v.name = VAGRANT_BOX_NAME
+            v.memory = VAGRANT_RAM_MB
+            v.cpus = VAGRANT_CPUS
+        end
+
     end
 
     # Ansible provisioner.
@@ -54,4 +76,28 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         ansible.become = true
     end
 
+end
+
+
+
+
+Vagrant.configure("2") do |config|
+    config.vm.box = "generic/ubuntu1804"
+
+    config.vm.define 'ubuntu'
+
+    # Vagrant boot needs more time on AppVeyor (see https://help.appveyor.com/discussions/problems/1247-vagrant-not-working-inside-appveyor)
+    config.vm.boot_timeout = 1800
+
+    # Prevent SharedFoldersEnableSymlinksCreate errors
+    config.vm.synced_folder ".", "/vagrant", disabled: true
+
+    config.vm.provider :virtualbox do |vb|
+        vb.name = 'ubuntu'
+        vb.memory = 128
+        vb.cpus = 1
+        # Vagrant needs this config on AppVeyor to spin up correctly (see https://help.appveyor.com/discussions/problems/1247-vagrant-not-working-inside-appveyor)
+        vb.customize ["modifyvm", :id, "--nictype1", "Am79C973"]
+        vb.customize ['modifyvm', :id, '--cableconnected1', 'on']
+    end
 end
