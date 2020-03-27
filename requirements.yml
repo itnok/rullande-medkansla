@@ -6,3 +6,5 @@ roles:
     version: 1.2.3
   - src: itnok.install_ros_ubuntu
     version: 1.0.0
+  - src: itnok.install_ros2_ubuntu
+    version: 1.0.0
