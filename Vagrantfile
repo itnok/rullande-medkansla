@@ -62,7 +62,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         end
 
         config.vm.provider :libvirt do |v|
-            v.name = VAGRANT_BOX_NAME
             v.memory = VAGRANT_RAM_MB
             v.cpus = VAGRANT_CPUS
         end
