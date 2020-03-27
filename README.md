@@ -1,7 +1,7 @@
-VOLVUNTU
-========
+Rullande Medkänsla
+==================
 
-Provision a fully configured Ubuntu 18.04 Bionic Beaver VM using Vagrant & Ansible
+Provision a fully configured Ubuntu 18.04 Bionic Beaver VM for development using Vagrant & Ansible
 
 :paw_prints: Getting Started
 ----------------------------
@@ -15,7 +15,7 @@ To use the `Vagrantfile`, you will need to have the following steps coverd first
 - Install [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
 - Install the required Ansible Roles the provisioning Ansible Playbook relies upon with:
 ```
-    $ ansible-galaxy install -r requirements.yml
+    $ ansible-galaxy role install --force -r requirements.yml
 ```
 
 _(This operation should happend form the CLI from inside the repository directory)_
@@ -30,4 +30,16 @@ Once the new VM is up and running _(after `vagrant up` is complete and you're ba
 
 ```
     $ vagrant ssh
+```
+
+If the VM is up and running and a new provisioning is needed to clean up any change interfering with the development environment from the host machine run:
+
+```
+    $ vagrant provision
+```
+
+To destroy the VM and completely remove it from the host machine use:
+
+```
+    $ vagrant destroy
 ```
