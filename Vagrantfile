@@ -57,7 +57,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
             box.vm.network :private_network,
                 :type => "dhcp",
                 :libvirt__network_address => VAGRANT_IP_ADDR_BASE + "0"
-            end
         else
             box.vm.network :private_network, ip: VAGRANT_IP_ADDR
         end
