@@ -59,8 +59,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
                 :libvirt__network_address => VAGRANT_IP_ADDR_BASE + "0"
         else
             box.vm.network :private_network, ip: VAGRANT_IP_ADDR
+            box.vm.network :forwarded_port, guest: 22, host: LOCAL_SSH_PORT, id: "ssh", auto_correct: true
         end
-        box.vm.network :forwarded_port, guest: 22, host: LOCAL_SSH_PORT, id: "ssh", auto_correct: true
 
         box.vm.provider :vmware_desktop do |v|
             v.gui = true
