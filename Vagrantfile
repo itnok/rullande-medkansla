@@ -26,6 +26,10 @@ LOCAL_SSH_PORT = "22022"
 
 # Allows to set some parameters via environment variables
 # Mostly usefull to deal with CI where resource are constrained (e.g. Travis CI)
+if ENV["VAGRANT_DEFAULT_PROVIDER"] == ""
+    ENV["VAGRANT_DEFAULT_PROVIDER"] = "vmware_desktop"
+end
+
 if ENV["VAGRANT_CPUS"] == ""
     ENV["VAGRANT_CPU"] = VAGRANT_CPUS
 end
