@@ -52,7 +52,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         end
 
         config.vm.provider :virtualbox do |v|
-            v.name = VAGRANT_BOX_NAME
             v.memory = VAGRANT_RAM_MB
             v.cpus = VAGRANT_CPUS
             # Vagrant needs this config on AppVeyor to spin up correctly
