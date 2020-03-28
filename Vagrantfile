@@ -82,6 +82,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
             v.memory = ENV["VAGRANT_RAM_MB"]
             v.cpus = ENV["VAGRANT_CPUS"]
             v.nic_model_type = "rtl8139"
+            v.nic_adapter_count = "1"
+            v.graphics_type = "vnc"
+            v.graphics_port = "5900"
         end
 
     end
