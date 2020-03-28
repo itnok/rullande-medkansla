@@ -24,5 +24,5 @@ install:
   - sudo vagrant plugin install vagrant-libvirt
 
 script:
-  - sudo VAGRANT_CPUS="2" VAGRANT_RAM_MB="2048" vagrant up --provider=libvirt
+  - sudo VAGRANT_CPUS="2" VAGRANT_RAM_MB="2048" VAGRANT_DHCP="YES" vagrant up --provider=libvirt
   - sudo vagrant ssh -c "echo 'It builds just fine!'"

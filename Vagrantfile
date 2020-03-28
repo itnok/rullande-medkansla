@@ -53,7 +53,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.define VAGRANT_BOX_NAME do |box|
         box.vm.box = VAGRANT_BOX_OS
         box.vm.hostname = VAGRANT_BOX_NAME
-        box.vm.network :private_network, ip: VAGRANT_IP_ADDR
+        if ENV["VAGRANT_DHCP"] == "YES"
+            box.vm.network :private_network,
+                :type => "dhcp",
+                :libvirt__network_address => VAGRANT_IP_ADDR_BASE + "0"
+            end
+        else
+            box.vm.network :private_network, ip: VAGRANT_IP_ADDR
+        end
         box.vm.network :forwarded_port, guest: 22, host: LOCAL_SSH_PORT, id: "ssh", auto_correct: true
 
         box.vm.provider :vmware_desktop do |v|
@@ -75,11 +82,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         config.vm.provider :libvirt do |v|
             v.memory = ENV["VAGRANT_RAM_MB"]
             v.cpus = ENV["VAGRANT_CPUS"]
-            config.vm.define :test_vm1 do |test_vm1|
-                box.vm.network :private_network,
-                  :type => "dhcp",
-                  :libvirt__network_address => VAGRANT_IP_ADDR_BASE + "0"
-              end
         end
 
     end
