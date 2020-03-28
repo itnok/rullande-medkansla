@@ -13,7 +13,8 @@ VAGRANT_RAM_MB = "8192"
 # number of CPUs for Vagrant box
 VAGRANT_CPUS = "4"
 # which IP address will be assigned to the box
-VAGRANT_IP_ADDR = "10.101.210.123"
+VAGRANT_IP_ADDR_BASE = "10.101.210."
+VAGRANT_IP_ADDR = VAGRANT_IP_ADDR_BASE + "123"
 # which host port to forward box SSH port to
 LOCAL_SSH_PORT = "22022"
 ### /configuration parameters ###
@@ -74,6 +75,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         config.vm.provider :libvirt do |v|
             v.memory = ENV["VAGRANT_RAM_MB"]
             v.cpus = ENV["VAGRANT_CPUS"]
+            config.vm.define :test_vm1 do |test_vm1|
+                box.vm.network :private_network,
+                  :type => "dhcp",
+                  :libvirt__network_address => VAGRANT_IP_ADDR_BASE + "0"
+              end
         end
 
     end
