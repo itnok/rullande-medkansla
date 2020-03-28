@@ -23,6 +23,17 @@ LOCAL_SSH_PORT = "22022"
 ### Probably NO NEED to touch anything below this point!
 ###
 
+# Allows to set some parameters via environment variables
+# Mostly usefull to deal with CI where resource are constrained (e.g. Travis CI)
+if ENV["VAGRANT_CPUS"] == ""
+    ENV["VAGRANT_CPU"] = VAGRANT_CPUS
+end
+
+if ENV["VAGRANT_RAM_MB"] == ""
+    ENV["VAGRANT_RAM_MB"] = VAGRANT_RAM_MB
+end
+
+
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.ssh.username = "vagrant"
     config.ssh.host = "127.0.0.1"
@@ -46,14 +57,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
         box.vm.provider :vmware_desktop do |v|
             v.gui = true
-            v.vmx["memsize"] = VAGRANT_RAM_MB
-            v.vmx["numvcpus"] = VAGRANT_CPUS
+            v.vmx["memsize"] = ENV["VAGRANT_RAM_MB"]
+            v.vmx["numvcpus"] = ENV["VAGRANT_CPUS"]
             v.vmx["mks.enable3d"] = true
         end
 
         config.vm.provider :virtualbox do |v|
-            v.memory = VAGRANT_RAM_MB
-            v.cpus = VAGRANT_CPUS
+            v.memory = ENV["VAGRANT_RAM_MB"]
+            v.cpus = ENV["VAGRANT_CPUS"]
             # Vagrant needs this config on AppVeyor to spin up correctly
             # See: https://help.appveyor.com/discussions/problems/1247-vagrant-not-working-inside-appveyor
             v.customize ["modifyvm", :id, "--nictype1", "Am79C973"]
@@ -61,8 +72,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         end
 
         config.vm.provider :libvirt do |v|
-            v.memory = VAGRANT_RAM_MB
-            v.cpus = VAGRANT_CPUS
+            v.memory = ENV["VAGRANT_RAM_MB"]
+            v.cpus = ENV["VAGRANT_CPUS"]
         end
 
     end
