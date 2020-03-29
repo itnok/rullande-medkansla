@@ -71,6 +71,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
             v.vmx["memsize"] = ENV["VAGRANT_RAM_MB"]
             v.vmx["numvcpus"] = ENV["VAGRANT_CPUS"]
             v.vmx["mks.enable3d"] = true
+            v.vmx["ethernet1.pcislotnumber"] = "38"
         end
 
         config.vm.provider :virtualbox do |v|
@@ -79,14 +80,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
             # Vagrant needs this config on AppVeyor to spin up correctly
             # See: https://help.appveyor.com/discussions/problems/1247-vagrant-not-working-inside-appveyor
             v.customize ["modifyvm", :id, "--nictype1", "Am79C973"]
-            v.customize ['modifyvm', :id, '--cableconnected1', 'on']
+            v.customize ['modifyvm', :id, "--cableconnected1", "on"]
         end
 
         config.vm.provider :libvirt do |v|
             v.memory = ENV["VAGRANT_RAM_MB"]
             v.cpus = ENV["VAGRANT_CPUS"]
             v.nic_model_type = "rtl8139"
-            v.nic_adapter_count = "1"
             v.graphics_type = "vnc"
             v.graphics_port = "5900"
         end
