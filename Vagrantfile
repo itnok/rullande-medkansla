@@ -27,6 +27,7 @@ LOCAL_SSH_PORT = "22022"
 ### Probably NO NEED to touch anything below this point!
 ###
 
+ENV["VAGRANT_DEFAULT_PROVIDER"] = VAGRANT_DEFAULT_PROVIDER
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.ssh.username = "v0vten"
