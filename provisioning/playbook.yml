@@ -1,5 +1,5 @@
 ---
-- hosts: volvuntu
+- hosts: rullandemedkansla
   gather_facts: yes
 
   vars_files:
