@@ -7,7 +7,7 @@ VAGRANTFILE_API_VERSION = "2"
 # Vagrant box name (used for hostname too)
 VAGRANT_BOX_NAME = "rullandemedkansla"
 # Vagrant base box to use
-VAGRANT_BOX_OS = "generic/ubuntu1804"
+VAGRANT_BOX_OS = "itnok/Ubuntu1804"
 # amount of RAM for Vagrant box
 VAGRANT_RAM_MB = "8192"
 # number of CPUs for Vagrant box
@@ -40,7 +40,7 @@ end
 
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-    config.ssh.username = "vagrant"
+    config.ssh.username = "v0vten"
     config.ssh.host = "127.0.0.1"
     config.ssh.guest_port = 22
     config.ssh.insert_key = false
