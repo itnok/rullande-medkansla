@@ -1,3 +1,4 @@
 ---
   ntp_timezone: "America/Los_Angeles"
   ansible_python_interpreter: "/usr/bin/python3"
+  ansible_become_pass: "v0vten"
