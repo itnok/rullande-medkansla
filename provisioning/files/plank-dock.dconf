@@ -1,0 +1,21 @@
+[dock1]
+icon-size=48
+show-dock-item=false
+position='bottom'
+dock-items=['desktop.dockitem', 'eog.dockitem', 'gedit.dockitem', 'firefox.dockitem', 'org.gnome.Terminal.dockitem', 'trash.dockitem']
+unhide-delay=250
+items-alignment='center'
+theme='MB-X-Dark'
+hide-mode='auto'
+pinned-only=false
+auto-pinning=true
+alignment='center'
+zoom-percent=200
+hide-delay=500
+zoom-enabled=true
+monitor=''
+lock-items=false
+tooltips-enabled=true
+pressure-reveal=false
+offset=0
+current-workspace-only=false

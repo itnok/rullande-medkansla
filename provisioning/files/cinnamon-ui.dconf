@@ -1,0 +1,51 @@
+[/]
+panels-height=['1:24']
+alttab-switcher-delay=100
+panel-edit-mode=false
+enabled-applets=['panel1:left:1:menu@cinnamon.org:0', 'panel1:right:4:systray@cinnamon.org:3', 'panel1:right:12:notifications@cinnamon.org:4', 'panel1:right:6:keyboard@cinnamon.org:7', 'panel1:right:5:network@cinnamon.org:9', 'panel1:right:7:sound@cinnamon.org:10', 'panel1:right:9:power@cinnamon.org:11', 'panel1:right:10:calendar@cinnamon.org:12', 'panel1:left:2:spacer@cinnamon.org:13', 'panel1:left:0:spacer@cinnamon.org:14', 'panel1:right:13:spacer@cinnamon.org:15', 'panel1:right:11:spacer@cinnamon.org:17', 'panel1:right:8:spacer@cinnamon.org:18', 'panel1:right:2:spacer@cinnamon.org:19']
+alttab-minimized-aware=true
+next-applet-id=21
+enabled-desklets=@as []
+alttab-switcher-style='icons'
+hotcorner-layout=['expo:false:0', 'scale:false:0', 'scale:false:0', 'desktop:false:0']
+panel-zone-icon-sizes='[{"panelId": 1, "left": 22, "center": 0, "right": 0}]'
+alttab-switcher-show-all-workspaces=true
+applet-cache-updated=1584476354
+panels-enabled=['1:0:top']
+
+[muffin]
+resize-threshold=24
+
+[desktop/a11y/applications]
+screen-keyboard-enabled=false
+screen-reader-enabled=false
+
+[desktop/a11y/mouse]
+secondary-click-enabled=false
+secondary-click-time=1.2
+dwell-time=1.2
+dwell-threshold=10
+dwell-click-enabled=false
+
+[desktop/background/slideshow]
+image-source='directory:///~/Pictures'
+delay=15
+
+[desktop/interface]
+icon-theme='MacBuntu-OSX'
+cursor-theme='Macbuntu-OSX-cursors'
+gtk-theme='MacBuntu-Sierra-dark-solid'
+toolkit-accessibility=false
+
+[desktop/sound]
+event-sounds=false
+
+[desktop/wm/preferences]
+min-window-opacity=30
+button-layout='close,minimize,maximize:'
+theme='MacBuntu-Sierra-dark'
+
+[theme]
+symbolic-relative-size=0.75
+theme-cache-updated=0
+name='MacBuntu-OS-3.2-High-Sierra-Dark-master'
