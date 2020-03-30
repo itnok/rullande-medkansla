@@ -6,6 +6,8 @@
 VAGRANT_DEFAULT_PROVIDER = ENV["VAGRANT_DEFAULT_PROVIDER"] || "vmware_desktop"
 # Vagrant API version to use
 VAGRANTFILE_API_VERSION = "2"
+# Vagrant box username
+VAGRANT_BOX_USER = "v0vten"
 # Vagrant box name (used for hostname too)
 VAGRANT_BOX_NAME = "rullandemedkansla"
 # Vagrant base box to use
@@ -30,7 +32,7 @@ LOCAL_SSH_PORT = "22022"
 ENV["VAGRANT_DEFAULT_PROVIDER"] = VAGRANT_DEFAULT_PROVIDER
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-    config.ssh.username = "v0vten"
+    config.ssh.username = VAGRANT_BOX_USER
     config.ssh.host = "127.0.0.1"
     config.ssh.guest_port = 22
     config.ssh.insert_key = false
@@ -73,8 +75,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
             v.customize ['modifyvm', :id, "--cableconnected1", "on"]
         end
 
-        config.vm.provider :libvirt do |v, override|
+        config.vm.provider :libvirt do |v|
+            v.username = VAGRANT_BOX_USER
             v.driver = "kvm"
+            v.connect_via_ssh = false
             v.memory = VAGRANT_RAM_MB
             v.cpus = VAGRANT_CPUS
             v.video_vram = 256
