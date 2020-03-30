@@ -73,9 +73,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
             v.customize ['modifyvm', :id, "--cableconnected1", "on"]
         end
 
-        config.vm.provider :libvirt do |v|
+        config.vm.provider :libvirt do |v, override|
+            v.driver = "kvm"
             v.memory = VAGRANT_RAM_MB
             v.cpus = VAGRANT_CPUS
+            v.video_vram = 256
             v.nic_model_type = "rtl8139"
             v.graphics_type = "vnc"
             v.graphics_port = "5900"
