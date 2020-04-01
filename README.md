@@ -3,6 +3,8 @@ Rullande Medkänsla
 
 Provision a fully configured Ubuntu 18.04 Bionic Beaver VM for development using Vagrant & Ansible
 
+![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/itnok/rullande-medkansla?sort=semver) ![Travis (.com) branch](https://img.shields.io/travis/com/itnok/rullande-medkansla/master)
+
 :paw_prints: Getting Started
 ----------------------------
 
