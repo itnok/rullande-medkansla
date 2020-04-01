@@ -9,6 +9,10 @@ cache:
   directories:
   - /home/travis/.vagrant.d/boxes
 
+addons:
+  ssh_known_hosts:
+  - 10.101.210.2
+
 install:
   # Install libvrt & KVM (see https://github.com/alvistack/ansible-role-virtualbox/blob/master/.travis.yml)
   - sudo apt-get update && sudo apt-get install -y bridge-utils dnsmasq-base ebtables libvirt-bin libvirt-dev qemu-kvm qemu-utils ruby-dev
@@ -24,5 +28,5 @@ install:
   - sudo vagrant plugin install vagrant-libvirt
 
 script:
-  - sudo VAGRANT_CPUS="2" VAGRANT_RAM_MB="2048" VAGRANT_DHCP="YES" vagrant up --provider=libvirt
+  - sudo VAGRANT_CPUS="2" VAGRANT_RAM_MB="2048" vagrant up --provider=libvirt
   - sudo vagrant ssh -c "echo 'It builds just fine!'"
