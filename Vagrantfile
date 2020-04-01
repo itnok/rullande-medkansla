@@ -48,18 +48,21 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     if VAGRANT_DHCP == "YES"
         config.vm.network :private_network, :type => "dhcp",
-        :libvirt__network_address => VAGRANT_IP_ADDR_BASE + "0",
-        :libvirt__dhcp_enabled => true, :libvirt__netmask => "255.255.255.252",
-        :libvirt__dhcp_start => VAGRANT_IP_ADDR, :libvirt__dhcp_stop => VAGRANT_IP_ADDR
+            :netmask => "255.255.255.252", :libvirt__netmask => "255.255.255.252",
+            :libvirt__network_address => VAGRANT_IP_ADDR_BASE + "0",
+            :libvirt__dhcp_enabled => true,
+            :libvirt__dhcp_start => VAGRANT_IP_ADDR,
+            :libvirt__dhcp_stop => VAGRANT_IP_ADDR
     else
         # LibVirt appears to be incapable of understanding the concept of static IP
         # Using a very restrictive netmask solves the problem...
-        config.vm.network :private_network,
-            ip: VAGRANT_IP_ADDR, :netmask => "255.255.255.252",
-            :libvirt__netmask => "255.255.255.252"
+        config.vm.network :private_network, ip: VAGRANT_IP_ADDR,
+            :netmask => "255.255.255.252", :libvirt__netmask => "255.255.255.252"
     end
 
-    config.vm.network :forwarded_port, guest: 22, host: LOCAL_SSH_PORT, id: "ssh", auto_correct: true
+    config.vm.network :forwarded_port,
+        guest: 22, host: LOCAL_SSH_PORT,
+        id: "ssh", auto_correct: true
 
     # Set the name of the VM.
     # See: http://stackoverflow.com/a/17864388/100134
