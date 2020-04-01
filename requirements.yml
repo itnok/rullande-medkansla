@@ -1,9 +1,9 @@
 ---
 roles:
   - src: itnok.update_ubuntu
-    version: 1.0.2
+    version: 1.0.3
   - src: itnok.manage_pkg_ubuntu
-    version: 1.2.3
+    version: 1.2.4
   - src: itnok.install_ros_ubuntu
     version: 1.0.0
   - src: itnok.install_ros2_ubuntu

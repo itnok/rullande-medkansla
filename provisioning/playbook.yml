@@ -1,5 +1,5 @@
 ---
-- hosts: volvuntu
+- hosts: rullandemedkansla
   gather_facts: yes
 
   vars_files:
@@ -10,6 +10,14 @@
       set_fact:
         remote_user: "{{ ansible_ssh_user }}"
       when: remote_user is not defined
+
+    - name: "==> Disable automatic system updates"
+      lineinfile:
+        path: "/etc/apt/apt.conf.d/20auto-upgrades"
+        regexp: "^APT.*Periodic.*Update-Package-List"
+        line: 'APT::Periodic::Update-Package-Lists "0";'
+        state: present
+      become: yes
 
     - name: "==> Install Hardware Enablement package"
       include_role:
@@ -128,7 +136,7 @@
       vars:
         manage_pkg_app_do: "absent"
         manage_pkg_app:
-            - "gdm3"
+          - "gdm3"
 
     - name: "Reboot of {{ ansible_host }} to activate SDDM"
       reboot:
@@ -159,44 +167,39 @@
           - "macbuntu-os-plank-theme-v1804"
           - "plank"
 
-    - name: "Customize Cinnamon UI"
-      dconf:
-        key: "{{ item.key }}"
-        value: "{{ item.value }}"
-        state: present
+    - name: "Send to remote system UI customization files"
+      copy:
+        src: "files/{{ item }}"
+        dest: "/tmp/{{ item }}"
+        owner: "{{ remote_user }}"
+        group: "{{ remote_user }}"
+        mode: u=rw,g=rw,o=r
       with_items:
-        - { key: "/org/cinnamon/panels-height", value: [ "1:24" ] }
-        - { key: "/org/cinnamon/alttab-switcher-delay", value: "100" }
-        - { key: "/org/cinnamon/panel-edit-mode", value: "false" }
-        - { key: "/org/cinnamon/enabled-applets", value: [ "panel1:left:1:menu@cinnamon.org:0", "panel1:right:4:systray@cinnamon.org:3", "panel1:right:12:notifications@cinnamon.org:4", "panel1:right:6:keyboard@cinnamon.org:7", "panel1:right:5:network@cinnamon.org:9", "panel1:right:7:sound@cinnamon.org:10", "panel1:right:9:power@cinnamon.org:11", "panel1:right:10:calendar@cinnamon.org:12", "panel1:left:2:spacer@cinnamon.org:13", "panel1:left:0:spacer@cinnamon.org:14", "panel1:right:13:spacer@cinnamon.org:15", "panel1:right:11:spacer@cinnamon.org:17", "panel1:right:8:spacer@cinnamon.org:18", "panel1:right:2:spacer@cinnamon.org:19" ] }
-        - { key: "/org/cinnamon/alttab-minimized-aware", value: "true" }
-        - { key: "/org/cinnamon/next-applet-id", value: "21" }
-        - { key: "/org/cinnamon/enabled-desklets", value: "@as []" }
-        - { key: "/org/cinnamon/alttab-switcher-style", value: "'icons'" }
-        - { key: "/org/cinnamon/hotcorner-layout", value: [ "expo:false:0", "scale:false:0", "scale:false:0", "desktop:false:0" ] }
-        - { key: "/org/cinnamon/panel-zone-icon-sizes", value: '[{"panelId": 1, "left": 22, "center": 0, "right": 0}]' }
-        - { key: "/org/cinnamon/alttab-switcher-show-all-workspaces", value: "true" }
-        - { key: "/org/cinnamon/applet-cache-updated", value: "0" }
-        - { key: "/org/cinnamon/panels-enabled", value: [ "1:0:top" ] }
+        - "cinnamon-ui.dconf"
+        - "plank-dock.dconf"
 
-        - { key: "/org/cinnamon/muffin/resize-threshold", value: "24" }
+    - name: "Customize UI"
+      shell: "dbus-launch dconf load {{ item.key }} < /tmp/{{ item.conf }}"
+      with_items:
+        - { "key": "/org/cinnamon/", "conf": "cinnamon-ui.dconf" }
+        - { "key": "/net/launchpad/plank/docks/", "conf": "plank-dock.dconf" }
+      become: yes
+      become_user: "{{ remote_user }}"
+      become_method: sudo
 
-        - { key: "/org/cinnamon/desktop/background/slideshow/image-source", value: "'directory:///~/Pictures'" }
-        - { key: "/org/cinnamon/desktop/background/slideshow/delay", value: "15" }
+    - name: "Create a autostart directory if it does not exist"
+      file:
+        path: "/home/{{ remote_user }}/.config/autostart"
+        state: directory
+        mode: "0755"
 
-        - { key: "/org/cinnamon/desktop/interface/icon-theme", value: "'MacBuntu-OSX'" }
-        - { key: "/org/cinnamon/desktop/interface/cursor-theme", value: "'Macbuntu-OSX-cursors'" }
-        - { key: "/org/cinnamon/desktop/interface/gtk-theme", value: "'MacBuntu-Sierra-dark-solid'" }
-
-        - { key: "/org/cinnamon/desktop/sound/event-sounds", value: "false" }
-
-        - { key: "/org/cinnamon/desktop/wm/preferences/min-window-opacity", value: "30" }
-        - { key: "/org/cinnamon/desktop/wm/preferences/button-layout", value: "'close,minimize,maximize:'" }
-        - { key: "/org/cinnamon/desktop/wm/preferences/theme", value: "'MacBuntu-Sierra-dark'" }
-
-        - { key: "/org/cinnamon/theme/symbolic-relative-size", value: "0.75" }
-        - { key: "/org/cinnamon/theme/theme-cache-updated", value: "0" }
-        - { key: "/org/cinnamon/theme/name", value: "'MacBuntu-OS-3.2-High-Sierra-Dark-master'" }
+    - name: "Set Plank to autostart on login"
+      copy:
+        src: "files/plank.desktop"
+        dest: "/home/{{ remote_user }}/.config/autostart/plank.desktop"
+        owner: "{{ remote_user }}"
+        group: "{{ remote_user }}"
+        mode: u=rw,g=rw,o=r
 
     - name: "==> Install Mesa"
       include_role:

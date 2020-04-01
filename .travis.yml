@@ -1,0 +1,40 @@
+---
+dist: bionic
+language: python
+python: "3.6"
+
+
+install:
+  # Install libvrt & KVM (see https://github.com/alvistack/ansible-role-virtualbox/blob/master/.travis.yml)
+  - sudo apt-get update
+  - sudo apt-get install -y bridge-utils dnsmasq-base ebtables libvirt-bin libvirt-dev qemu-kvm qemu-utils ruby-dev
+
+  # Install Ansible & Galaxy Roles
+  - sudo apt-get update
+  - sudo apt-get install -y software-properties-common
+  - sudo apt-add-repository -y ppa:ansible/ansible
+  - sudo apt-get update
+  - sudo apt-get install -y ansible
+  - sudo ansible-galaxy role install --force -r requirements.yml
+
+  # Download Vagrant & Install Vagrant package
+  - sudo wget -nv https://releases.hashicorp.com/vagrant/2.2.7/vagrant_2.2.7_x86_64.deb
+  - sudo dpkg -i vagrant_2.2.7_x86_64.deb
+
+  # Was Vagrant correctly installed?
+  - vagrant --version
+
+  # Install vagrant-libvirt Vagrant plugin
+  - sudo vagrant plugin install vagrant-libvirt
+
+before_script:
+  - >-
+    sudo /bin/bash
+    -c 'echo -e "Host 10.101.210.*\n  StrictHostKeyChecking no\n  UserKnownHostsFile=/dev/null\n"
+    > /root/.ssh/config
+    &&
+    chmod 600 /root/.ssh/config'
+
+script:
+  - sudo VAGRANT_CPUS="2" VAGRANT_RAM_MB="2048" VAGRANT_DHCP="YES" vagrant up --provider=libvirt
+  - sudo vagrant ssh -c "echo 'It builds just fine!'"
