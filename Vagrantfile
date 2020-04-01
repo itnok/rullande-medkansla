@@ -2,6 +2,8 @@
 # vi: set ft=ruby :
 
 ### configuration parameters ###
+# Vagrant default home directory
+VAGRANT_HOME = ENV["VAGRANT_HOME"] || "~/.vagrant.d"
 # Vagrant default provider
 VAGRANT_DEFAULT_PROVIDER = ENV["VAGRANT_DEFAULT_PROVIDER"] || "vmware_desktop"
 # Vagrant API version to use
@@ -19,7 +21,7 @@ VAGRANT_CPUS = ENV["VAGRANT_CPUS"] || "4"
 # which IP address will be assigned to the box
 VAGRANT_DHCP = ENV["VAGRANT_DHCP"] || "NO"
 VAGRANT_IP_ADDR_BASE = "10.101.210."
-VAGRANT_IP_ADDR = VAGRANT_IP_ADDR_BASE + "123"
+VAGRANT_IP_ADDR = VAGRANT_IP_ADDR_BASE + "2"
 # which host port to forward box SSH port to
 LOCAL_SSH_PORT = "22022"
 ### /configuration parameters ###
@@ -44,19 +46,23 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # Prevent SharedFoldersEnableSymlinksCreate errors.
     config.vm.synced_folder ".", "/vagrant", disabled: true
 
+    if VAGRANT_DHCP == "YES"
+        config.vm.network :private_network, :type => "dhcp"
+    else
+        # LibVirt appears to be incapable of understanding the concept of static IP
+        # Using a very restrictive netmask solves the problem...
+        config.vm.network :private_network,
+            ip: VAGRANT_IP_ADDR, :netmask => "255.255.255.252"
+    end
+
+    config.vm.network :forwarded_port, guest: 22, host: LOCAL_SSH_PORT, id: "ssh", auto_correct: true,
+        :libvirt__network_address => VAGRANT_IP_ADDR_BASE + "0"
+
     # Set the name of the VM.
     # See: http://stackoverflow.com/a/17864388/100134
     config.vm.define VAGRANT_BOX_NAME do |box|
         box.vm.box = VAGRANT_BOX_OS
         box.vm.hostname = VAGRANT_BOX_NAME
-        if VAGRANT_DHCP == "YES"
-            box.vm.network :private_network,
-                :type => "dhcp",
-                :libvirt__network_address => VAGRANT_IP_ADDR_BASE + "0"
-        else
-            box.vm.network :private_network, ip: VAGRANT_IP_ADDR
-            box.vm.network :forwarded_port, guest: 22, host: LOCAL_SSH_PORT, id: "ssh", auto_correct: true
-        end
 
         box.vm.provider :vmware_desktop do |v|
             v.gui = true
@@ -76,15 +82,20 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         end
 
         config.vm.provider :libvirt do |v|
+            v.uri = "qemu:///system"
+            v.host = VAGRANT_IP_ADDR
             v.username = VAGRANT_BOX_USER
             v.driver = "kvm"
-            v.connect_via_ssh = false
+            v.id_ssh_key_file = File.expand_path(VAGRANT_HOME + "/insecure_private_key")
+            v.connect_via_ssh = true
             v.memory = VAGRANT_RAM_MB
             v.cpus = VAGRANT_CPUS
             v.video_vram = 256
             v.nic_model_type = "rtl8139"
+            v.graphics_ip = "localhost"
             v.graphics_type = "vnc"
-            v.graphics_port = "5900"
+            v.graphics_port = "59666"
+            v.mgmt_attach = true
         end
 
     end
@@ -97,3 +108,4 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
 
 end
+
