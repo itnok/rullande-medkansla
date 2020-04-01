@@ -4,11 +4,6 @@ language: python
 python: "3.6"
 
 
-# Cache the big Vagrant boxes
-cache:
-  directories:
-  - /home/travis/.vagrant.d/boxes
-
 install:
   # Install libvrt & KVM (see https://github.com/alvistack/ansible-role-virtualbox/blob/master/.travis.yml)
   - sudo apt-get update
