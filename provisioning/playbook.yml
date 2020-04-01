@@ -11,6 +11,14 @@
         remote_user: "{{ ansible_ssh_user }}"
       when: remote_user is not defined
 
+    - name: "==> Disable automatic system updates"
+      lineinfile:
+        path: "/etc/apt/apt.conf.d/20auto-upgrades"
+        regexp: "^APT.*Periodic.*Update-Package-List"
+        line: 'APT::Periodic::Update-Package-Lists "0";'
+        state: present
+      become: yes
+
     - name: "==> Install Hardware Enablement package"
       include_role:
         name: itnok.manage_pkg_ubuntu
