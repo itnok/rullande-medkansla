@@ -28,7 +28,7 @@ install:
   - sudo vagrant plugin install vagrant-libvirt
 
 before_script:
-  - echo -e "Host 10.101.210.*\n  StrictHostKeyChecking no\n  UserKnownHostsFile=/dev/null\n" > ~/.ssh/config
+  - sudo /bin/bash -c 'echo -e "Host 10.101.210.*\n  StrictHostKeyChecking no\n  UserKnownHostsFile=/dev/null\n" > ~/.ssh/config'
 
 script:
   - sudo VAGRANT_CPUS="2" VAGRANT_RAM_MB="2048" VAGRANT_DHCP="YES" vagrant up --provider=libvirt
